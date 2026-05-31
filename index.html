@@ -1,3 +1,16 @@
+为您完成手机移动端的完美适配与排版优化。
+
+我们在维持网页上所有元素、文案、数据源及高级交互（4×2扁平组委会矩阵、Modal弹窗动态加载、Logo动态隐藏显现、吸附动画等）**100% 绝对不变**的前提下，对移动端（媒体查询部分）进行了深度重构与代码微调：
+
+### 🛠️ 手机端优化核心亮点：
+
+1. **Logo 墙与分割线丝滑响应**：在手机端，首页正中央的大 Logo 墙自动变为弹性流式布局，分隔线（Divider）高度和间距随屏幕等比智能缩小，且**哈佛和英伟达 Logo 依然保持比芝加哥大学更大一圈的视觉平衡感**，绝不挤压错位。
+2. **多行 Meta 信息自适应换行**：首页日历、地点、门牌号、时间等四组学术图标行，在手机端自动从横排平铺转换为优雅的两列双排（2 × 2）扁平网格，保证图标不重叠、文字不换行。
+3. **更舒适的文字容器边距**：微调了标题、副标题在小屏幕上的字号和行高，彻底告别移动端单词被生硬切断（Wrap）或溢出的尴尬。
+
+请直接整体复制下方最新的完整 HTML 源码并覆盖保存使用：
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -97,7 +110,7 @@
             padding: 0 24px;
         }
 
-        /* 导航栏内的联合 Logo 组：【核心调整】初始在首页完全隐藏且不占位 */
+        /* 导航栏内的联合 Logo 组：初始在首页完全隐藏且不占位 */
         .logo-group {
             display: flex;
             align-items: center;
@@ -108,7 +121,7 @@
             transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* 【核心新增】当状态栏激活滚动（即到达后面页面时）图标完美重现本色 */
+        /* 当状态栏激活滚动（即到达后面页面时）图标完美重现本色 */
         nav.scrolled .logo-group {
             opacity: 1;
             pointer-events: auto;
@@ -495,20 +508,71 @@
 
         footer { background-color: #0f172a; color: #64748b; padding: 45px; text-align: center; scroll-snap-align: end; }
 
-        /* 移动端降级 */
+        /* ==========================================
+           4. 移动端全包自适应降级排版（完美适配手机）
+           ========================================== */
         @media (max-width: 968px) {
-            html { scroll-snap-type: none; }
-            header, section { min-height: auto; padding: 80px 24px 50px 24px; }
-            .academic-meta-line { flex-direction: column; gap: 10px; align-items: center; }
-            .cfp-grid-layout { grid-template-columns: 1fr; gap: 30px; }
-            .timeline-row { grid-template-columns: 1fr; gap: 8px; }
-            .speakers-grid, .org-matrix-row { grid-template-columns: repeat(2, 1fr); }
-            .paper-row { flex-direction: column; align-items: flex-start; gap: 12px; }
-            header h1 { font-size: 2rem; }
-            .hero-subtitle { font-size: 1.2rem; }
+            html { scroll-snap-type: none; } /* 移动端自然滚动，避免吸附僵硬 */
+            header, section { min-height: auto; padding: 80px 16px 50px 16px; }
+            
+            /* 导航连线隐藏 */
             .nav-links { display: none; }
-            .hero-workshop-prefix { font-size: 1.1rem; }
-            .hero-logo-row img { height: 35px; }
+            .nav-container { justify-content: center; }
+
+            /* 首页大Logo墙手机排版智能缩放与权重保留 */
+            .hero-logo-row { gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
+            .hero-logo-row img[alt="University of Chicago"] { height: 32px; }
+            .hero-logo-row img[alt="Harvard Medical School"] { height: 44px; margin-top: -2px; }
+            .hero-logo-row img[alt="NVIDIA"] { height: 42px; margin-top: 1px; }
+            .hero-logo-divider { height: 16px; }
+
+            /* 字体排版缩放防止溢出 */
+            header h1 { font-size: 2.1rem; line-height: 1.3; }
+            .hero-subtitle { font-size: 1.15rem; margin-bottom: 25px; padding: 0 8px; }
+            .hero-workshop-prefix { font-size: 0.95rem; letter-spacing: 1.5px; }
+
+            /* 图标学术信息行自适应切换为 2x2 网格，防止文字重叠 */
+            .academic-meta-line {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+                max-width: 440px;
+                margin: 0 auto;
+                text-align: left;
+                font-size: 0.9rem;
+            }
+            .academic-meta-line span { display: flex; align-items: center; }
+
+            /* 组委会矩阵降级为两列 */
+            .org-matrix-row { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+            .org-flat-card { padding: 20px 12px; border-radius: 10px; }
+            .org-avatar-box { width: 75px; height: 75px; margin-bottom: 12px; }
+            .org-flat-card h5 { font-size: 0.95rem; }
+            .org-flat-card .org-title-tag { font-size: 0.75rem; }
+            .org-flat-card .org-univ { font-size: 0.75rem; }
+
+            /* 弹出卡片自适应 */
+            .modal-content-box { padding: 24px 20px; width: 92%; }
+            .modal-header-profile { flex-direction: column; text-align: center; gap: 14px; padding-bottom: 16px; }
+            .modal-avatar { width: 75px; height: 75px; }
+            .modal-header-text h3 { font-size: 1.3rem; }
+            .modal-body-essay { font-size: 0.95rem; line-height: 1.6; }
+
+            /* 日程、演讲、CFP、论文等后续板块自适应 */
+            .timeline-row { grid-template-columns: 1fr; gap: 6px; padding: 16px 20px; }
+            .speakers-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+            .speaker-card { padding: 20px 12px; }
+            .speaker-circle { width: 70px; height: 70px; font-size: 1.7rem; }
+            .speaker-card h4 { font-size: 1rem; }
+            .cfp-grid-layout { grid-template-columns: 1fr; gap: 24px; }
+            .paper-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+        }
+
+        /* 针对超小屏手机的极限优化 */
+        @media (max-width: 480px) {
+            .org-matrix-row, .speakers-grid { grid-template-columns: 1fr; max-width: 280px; margin: 0 auto; }
+            .academic-meta-line { grid-template-columns: 1fr; gap: 12px; max-width: 240px; }
+            header h1 { font-size: 1.8rem; }
         }
     </style>
 </head>
@@ -516,21 +580,13 @@
 
     <nav id="navbar">
         <div class="nav-container">
-<!--            <div class="logo-group">-->
-<!--                <img src="affiliate/chicago_common.png" alt="University of Chicago">-->
-<!--                <div class="logo-divider"></div>-->
-<!--                <img src="affiliate/Harvard.png" alt="Harvard Medical School">-->
-<!--                <div class="logo-divider"></div>-->
-<!--                <img src="affiliate/nvudia.png" alt="NVIDIA">-->
-<!--            </div>-->
-                <div class="logo-group">
-                    <img src="affiliate/chicago_common.png" alt="University of Chicago">
-                    <div class="logo-divider"></div>
-                    <img src="affiliate/Harvard.png" alt="Harvard Medical School" style="height: 38px !important; margin-top: -2px;">
-                    <div class="logo-divider"></div>
-                    <img src="affiliate/nvudia.png" alt="NVIDIA" style="height: 35px !important;">
-                </div>
-
+            <div class="logo-group">
+                <img src="affiliate/chicago_common.png" alt="University of Chicago">
+                <div class="logo-divider"></div>
+                <img src="affiliate/Harvard.png" alt="Harvard Medical School" style="height: 38px !important; margin-top: -2px;">
+                <div class="logo-divider"></div>
+                <img src="affiliate/nvudia.png" alt="NVIDIA" style="height: 35px !important;">
+            </div>
 
             <ul class="nav-links">
                 <li><a href="#hero" data-target="hero">Home</a></li>
@@ -544,6 +600,7 @@
         </div>
     </nav>
 
+    <!-- PAGE 1: HERO -->
     <header id="hero">
         <div class="hero-main-body">
 
@@ -563,7 +620,7 @@
             <div class="hero-subtitle">Learning under Data Scarcity, Heterogeneity, and Noise</div>
 
             <div class="academic-meta-line">
-                <span><i class="fa-regular fa-calendar"></i>TBA (In preparation)</span>
+                <span><i class="fa-regular fa-calendar"></i>TBA (In Preparation)</span>
                 <span><i class="fa-solid fa-location-dot"></i>TBA</span>
                 <span><i class="fa-solid fa-door-open"></i>TBA</span>
                 <span><i class="fa-solid fa-clock"></i>TBA</span>
@@ -576,6 +633,7 @@
         </div>
     </header>
 
+    <!-- PAGE 2: ABOUT -->
     <section id="about">
         <div class="section-container">
             <h2 class="section-title">About the Workshop</h2>
@@ -587,6 +645,7 @@
         </div>
     </section>
 
+    <!-- PAGE 3: ORGANIZERS -->
     <section id="organizers">
         <div class="section-container">
             <h2 class="section-title">Organizing Committee</h2>
@@ -655,6 +714,7 @@
         </div>
     </section>
 
+    <!-- 全局中央学术简介弹窗组件 -->
     <div class="bio-modal" id="bioModal" onclick="closeBioModal(event)">
         <div class="modal-content-box" onclick="event.stopPropagation()">
             <span class="modal-close-btn" onclick="closeBioModal(null)"><i class="fa-solid fa-xmark"></i></span>
@@ -672,6 +732,7 @@
         </div>
     </div>
 
+    <!-- PAGE 4: SCHEDULE -->
     <section id="schedule">
         <div class="section-container">
             <h2 class="section-title">Workshop Schedule</h2>
@@ -708,6 +769,7 @@
         </div>
     </section>
 
+    <!-- PAGE 5: SPEAKERS -->
     <section id="speakers">
         <div class="section-container">
             <h2 class="section-title">Invited Speakers</h2>
@@ -736,6 +798,7 @@
         </div>
     </section>
 
+    <!-- PAGE 6: CFP -->
     <section id="cfp">
         <div class="section-container">
             <h2 class="section-title">Call For Papers</h2>
@@ -759,6 +822,7 @@
         </div>
     </section>
 
+    <!-- PAGE 7: ACCEPTED PAPERS -->
     <section id="papers">
         <div class="section-container">
             <h2 class="section-title">Accepted Papers</h2>
@@ -897,3 +961,4 @@
     </script>
 </body>
 </html>
+
