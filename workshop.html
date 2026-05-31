@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The 1st Workshop on AI for Rare Disease Phenotypes: Learning under Data Scarcity, Heterogeneity, and Noise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* ==========================================
+           1. 全局精密调色盘与基础重置
+           ========================================== */
+        :root {
+            --primary: #0f172a;       /* 核心深海蓝 */
+            --accent: #0ea5e9;        /* 医疗科技蓝 */
+            --accent-dark: #0284c7;   /* 深互动蓝 */
+            --accent-light: #e0f2fe;  /* 淡蓝互动色 */
+            --text-main: #334155;     /* 标准主文本 */
+            --text-muted: #64748b;    /* 次级辅助文本 */
+            --conference-blue: #0ea5e9; /* 科技链接蓝 */
+
+            /* 状态栏滚动出现后的好看底色（带毛玻璃质感） */
+            --nav-bg-scrolled: rgba(255, 255, 255, 0.85);
+
+            /* 页面独立背景配方 */
+            --bg-page-home: #ffffff;
+            --bg-page-about: #ffffff;
+            --bg-page-organizers: #f1f5f9;
+            --bg-page-schedule: #f8fafc;
+            --bg-page-speakers: linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
+            --bg-page-cfp: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            --bg-page-papers: #ffffff;
+
+            --card-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-snap-type: y mandatory; /* 精准全屏吸附 */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            background-color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Lexend', sans-serif;
+            color: var(--primary);
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        /* ==========================================
+           2. 状态栏核心动效（优化：首页完全隐藏图标，后续自然长出）
+           ========================================== */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 26px 0;
+            background: rgba(255, 255, 255, 0);
+            border-bottom: 1px solid rgba(0, 0, 0, 0);
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        nav.scrolled {
+            background: var(--nav-bg-scrolled);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+            padding: 16px 0;
+        }
+
+        .nav-container {
+            max-width: 1240px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+        }
+
+        /* 导航栏内的联合 Logo 组：【核心调整】初始在首页完全隐藏且不占位 */
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(-10px);
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* 【核心新增】当状态栏激活滚动（即到达后面页面时）图标完美重现本色 */
+        nav.scrolled .logo-group {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(0);
+        }
+
+        .logo-group img {
+            height: 28px; /* 菜单栏随行状态下的精致小高度 */
+            width: auto;
+            filter: none !important;
+            opacity: 1;
+        }
+
+        /* 竖向高阶分割线 */
+        .logo-divider {
+            width: 1px;
+            height: 16px;
+            background: rgba(15, 23, 42, 0.1);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 8px;
+        }
+
+        .nav-links a {
+            display: block;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 6px 12px;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        .nav-links a:hover { color: var(--primary); }
+
+        /* 下划线式激活设计 */
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 12px;
+            right: 12px;
+            height: 2px;
+            background-color: var(--accent);
+            transform: scaleX(0);
+            transform-origin: center;
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .nav-links a.active { color: var(--primary) !important; font-weight: 600; }
+        nav.scrolled .nav-links a.active { color: var(--accent) !important; }
+        .nav-links a.active::after { transform: scaleX(1); }
+
+        /* ==========================================
+           3. 标准一页一屏版面容器
+           ========================================== */
+        header, section {
+            min-height: 100vh;
+            width: 100%;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 110px 24px 60px 24px;
+            overflow-x: hidden;
+        }
+
+        .section-container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            z-index: 5;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.3rem;
+            margin-bottom: 45px;
+            position: relative;
+            padding-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .section-title::after {
+            content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 50px; height: 4px; background-color: var(--accent); border-radius: 2px;
+        }
+
+        /* ==========================================
+           PAGE 1: HERO CONTAINER
+           ========================================== */
+        header {
+            background: var(--bg-page-home);
+            color: var(--primary);
+            padding-top: 140px;
+        }
+
+        .hero-main-body {
+            width: 100%;
+            max-width: 1050px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        /* 首页中央大尺寸官方机构 Logo 墙展示架构（完全不受菜单栏修改影响，完美保留） */
+        .hero-logo-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .hero-logo-row img {
+            height: 50px;
+            width: auto;
+            filter: none;
+            opacity: 1;
+        }
+        .hero-logo-divider {
+            width: 1px;
+            height: 24px;
+            background: rgba(15, 23, 42, 0.15);
+        }
+
+        /* 置于题目最上方的标准顶会首届 Workshop 引导前缀样式 */
+        .hero-workshop-prefix {
+            font-family: 'Lexend', sans-serif;
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        header h1 {
+            color: var(--primary);
+            font-size: 3.4rem;
+            line-height: 1.25;
+            margin-bottom: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.6rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-bottom: 35px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* 会议属性条线 */
+        .hero-workshop-tag-line {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.15rem;
+            color: var(--conference-blue);
+            font-weight: 500;
+            margin-top: 28px;
+            display: inline-block;
+        }
+
+        .academic-meta-line {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            color: var(--text-main);
+            font-size: 1.15rem;
+            font-weight: 500;
+        }
+        .academic-meta-line span i { color: var(--accent); margin-right: 10px; }
+
+        .scroll-indicator {
+            position: absolute; bottom: 35px; left: 50%; transform: translateX(-50%);
+            color: var(--text-muted); font-size: 1.5rem; animation: bounce 2s infinite; cursor: pointer; z-index: 2;
+        }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); } 40% { transform: translateY(-10px) translateX(-50%); } }
+
+        /* ==========================================
+           PAGE 2: ABOUT CONTAINER
+           ========================================== */
+        #about { background: var(--bg-page-about); border-top: 1px solid rgba(15, 23, 42, 0.05); }
+        .about-essay-full {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .about-essay-full p {
+            font-size: 1.15rem;
+            color: var(--text-main);
+            margin-bottom: 22px;
+            text-align: justify;
+            line-height: 1.8;
+        }
+
+        /* ==========================================
+           PAGE 3: ORGANIZERS
+           ========================================== */
+        #organizers { background: var(--bg-page-organizers); }
+        .org-container { display: flex; flex-direction: column; gap: 24px; }
+        .org-matrix-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+
+        .org-flat-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative;
+        }
+        .org-flat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 20px 30px -10px rgba(15, 23, 42, 0.08);
+        }
+
+        .org-avatar-box {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            margin: 0 auto 16px auto;
+            overflow: hidden;
+            background: var(--bg-page-organizers);
+            border: 3px solid var(--accent-light);
+            transition: border-color 0.3s;
+        }
+        .org-flat-card:hover .org-avatar-box {
+            border-color: var(--accent);
+        }
+        .org-avatar-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .org-flat-card h5 { font-size: 1.15rem; margin-bottom: 4px; font-weight: 700; color: var(--primary); }
+        .org-flat-card .org-title-tag { color: var(--accent); font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; }
+        .org-flat-card .org-univ { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; }
+
+        .view-bio-btn {
+            font-size: 0.75rem;
+            color: var(--accent);
+            margin-top: 12px;
+            display: inline-block;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(5px);
+            transition: all 0.3s;
+        }
+        .org-flat-card:hover .view-bio-btn {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 高级学术弹窗Modal系统 */
+        .bio-modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        .bio-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content-box {
+            background: #ffffff;
+            width: 100%;
+            max-width: 680px;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 30px 60px -15px rgba(15, 23, 42, 0.3);
+            position: relative;
+            transform: translateY(30px);
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .bio-modal.active .modal-content-box {
+            transform: translateY(0);
+        }
+        .modal-close-btn {
+            position: absolute;
+            top: 25px; right: 25px;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .modal-close-btn:hover { color: var(--primary); }
+
+        .modal-header-profile { display: flex; align-items: center; gap: 24px; margin-bottom: 25px; border-bottom: 1px solid #f1f5f9; padding-bottom: 20px; }
+        .modal-avatar { width: 85px; height: 85px; border-radius: 50%; overflow: hidden; border: 3px solid var(--accent-light); }
+        .modal-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .modal-header-text h3 { font-size: 1.6rem; margin-bottom: 4px; font-weight: 700; }
+        .modal-header-text .modal-email { font-size: 0.9rem; color: var(--accent); font-weight: 600; margin-bottom: 6px; display: block;}
+        .modal-header-text .modal-detail-title { font-size: 0.95rem; color: var(--text-main); font-weight: 500; line-height: 1.4; }
+
+        .modal-body-essay { font-size: 1.05rem; color: var(--text-main); line-height: 1.75; text-align: justify; }
+
+        /* ==========================================
+           PAGE 4: SCHEDULE
+           ========================================== */
+        #schedule { background: var(--bg-page-schedule); }
+        .timeline-container { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 900px; margin: 0 auto; }
+        .timeline-row {
+            display: grid; grid-template-columns: 140px 1fr; background: white;
+            padding: 22px 30px; border-radius: 12px; box-shadow: var(--card-shadow);
+            align-items: center; border-left: 4px solid #cbd5e1;
+        }
+        .timeline-row.highlight-slot { border-left-color: var(--accent); }
+        .time-slot { font-weight: 700; color: var(--primary); font-size: 1.15rem; }
+        .event-detail h4 { font-size: 1.1rem; color: var(--text-muted); font-weight: 500; font-style: italic; }
+        .event-detail p { font-size: 0.95rem; color: var(--text-muted); }
+        .badge-type { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; margin-left: 10px; text-transform: uppercase; }
+        .type-keynote { background: #fee2e2; color: #ef4444; }
+        .type-oral { background: #dcfce7; color: #22c55e; }
+
+        /* ==========================================
+           PAGE 5: INVITED SPEAKERS
+           ========================================== */
+        #speakers { background: var(--bg-page-speakers); }
+        .speakers-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; }
+        .speaker-card {
+            background: #ffffff; border-radius: 16px; padding: 35px 20px; text-align: center;
+            box-shadow: 0 15px 30px -10px rgba(15, 23, 42, 0.05); border: 1px solid #f1f5f9;
+        }
+        .speaker-circle {
+            width: 95px; height: 95px; border-radius: 50%; margin: 0 auto 18px auto;
+            background: var(--bg-light); display: flex; align-items: center; justify-content: center;
+            font-size: 2.2rem; color: #cbd5e1; border: 2px solid #cbd5e1;
+        }
+        .speaker-card h4 { font-size: 1.2rem; margin-bottom: 5px; font-weight: 500; color: var(--text-muted); font-style: italic; }
+        .speaker-card .inst { color: #94a3b8; font-weight: 400; font-size: 0.9rem; }
+
+        /* ==========================================
+           PAGE 6: CFP
+           ========================================== */
+        #cfp { background: var(--bg-page-cfp); color: #ffffff; }
+        #cfp .section-title { color: #ffffff; }
+        .cfp-grid-layout { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: start; }
+        .cfp-topics-block h3, .cfp-dates-block h3 { color: #ffffff; margin-bottom: 20px; font-size: 1.3rem; }
+        .cfp-topics-block ul { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+        .cfp-topics-block li {
+            padding: 18px; background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.12); color: #cbd5e1;
+            font-style: italic;
+        }
+        .cfp-dates-card { background: rgba(255, 255, 255, 0.03); padding: 24px 30px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); }
+        .flat-date-row { display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px dashed rgba(255, 255, 255, 0.15); }
+        .flat-date-row:last-child { border-bottom: none; }
+        .flat-date-row .date-label { color: #94a3b8; font-weight: 500; }
+        .flat-date-row .date-val { color: #64748b; font-weight: 500; font-style: italic; }
+
+        /* ==========================================
+           PAGE 7: ACCEPTED PAPERS
+           ========================================== */
+        #papers { background: var(--bg-page-papers); }
+        .paper-row {
+            background: white; padding: 22px 0; border-bottom: 1px solid #e2e8f0;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .paper-row:last-child { border-bottom: none; }
+        .paper-info h4 { font-size: 1.1rem; color: var(--text-muted); font-family: 'Inter', sans-serif; font-weight: 500; font-style: italic; }
+        .paper-info p { font-size: 0.9rem; color: #94a3b8; margin-top: 4px; }
+        .paper-action-links a {
+            font-size: 0.85rem; font-weight: 500; background: var(--bg-light); padding: 6px 14px; border-radius: 6px; margin-left: 8px; color: #94a3b8; pointer-events: none;
+        }
+
+        footer { background-color: #0f172a; color: #64748b; padding: 45px; text-align: center; scroll-snap-align: end; }
+
+        /* 移动端降级 */
+        @media (max-width: 968px) {
+            html { scroll-snap-type: none; }
+            header, section { min-height: auto; padding: 80px 24px 50px 24px; }
+            .academic-meta-line { flex-direction: column; gap: 10px; align-items: center; }
+            .cfp-grid-layout { grid-template-columns: 1fr; gap: 30px; }
+            .timeline-row { grid-template-columns: 1fr; gap: 8px; }
+            .speakers-grid, .org-matrix-row { grid-template-columns: repeat(2, 1fr); }
+            .paper-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+            header h1 { font-size: 2rem; }
+            .hero-subtitle { font-size: 1.2rem; }
+            .nav-links { display: none; }
+            .hero-workshop-prefix { font-size: 1.1rem; }
+            .hero-logo-row img { height: 35px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="navbar">
+        <div class="nav-container">
+<!--            <div class="logo-group">-->
+<!--                <img src="affiliate/chicago_common.png" alt="University of Chicago">-->
+<!--                <div class="logo-divider"></div>-->
+<!--                <img src="affiliate/Harvard.png" alt="Harvard Medical School">-->
+<!--                <div class="logo-divider"></div>-->
+<!--                <img src="affiliate/nvudia.png" alt="NVIDIA">-->
+<!--            </div>-->
+                <div class="logo-group">
+                    <img src="affiliate/chicago_common.png" alt="University of Chicago">
+                    <div class="logo-divider"></div>
+                    <img src="affiliate/Harvard.png" alt="Harvard Medical School" style="height: 38px !important; margin-top: -2px;">
+                    <div class="logo-divider"></div>
+                    <img src="affiliate/nvudia.png" alt="NVIDIA" style="height: 35px !important;">
+                </div>
+
+
+            <ul class="nav-links">
+                <li><a href="#hero" data-target="hero">Home</a></li>
+                <li><a href="#about" data-target="about">About</a></li>
+                <li><a href="#organizers" data-target="organizers">Organizers</a></li>
+                <li><a href="#schedule" data-target="schedule">Schedule</a></li>
+                <li><a href="#speakers" data-target="speakers">Speakers</a></li>
+                <li><a href="#cfp" data-target="cfp">CFP</a></li>
+                <li><a href="#papers" data-target="papers">Papers</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header id="hero">
+        <div class="hero-main-body">
+
+            <div class="hero-logo-row">
+                <img src="affiliate/chicago_common.png" alt="University of Chicago" style="height: 50px;">
+                <div class="hero-logo-divider"></div>
+
+                <img src="affiliate/Harvard.png" alt="Harvard Medical School" style="height: 70px; margin-top: -3px;">
+                <div class="hero-logo-divider"></div>
+
+                <img src="affiliate/nvudia.png" alt="NVIDIA" style="height: 68px; margin-top: 2px;">
+            </div>
+
+            <div class="hero-workshop-prefix">The 1st Workshop on</div>
+
+            <h1>AI for Rare Disease Phenotypes</h1>
+            <div class="hero-subtitle">Learning under Data Scarcity, Heterogeneity, and Noise</div>
+
+            <div class="academic-meta-line">
+                <span><i class="fa-regular fa-calendar"></i>TBA (In preparation)</span>
+                <span><i class="fa-solid fa-location-dot"></i>TBA</span>
+                <span><i class="fa-solid fa-door-open"></i>TBA</span>
+                <span><i class="fa-solid fa-clock"></i>TBA</span>
+            </div>
+
+        </div>
+
+        <div class="scroll-indicator" onclick="document.getElementById('about').scrollIntoView();">
+            <i class="fa-solid fa-chevron-down"></i>
+        </div>
+    </header>
+
+    <section id="about">
+        <div class="section-container">
+            <h2 class="section-title">About the Workshop</h2>
+            <div class="about-essay-full">
+                <p>Rare diseases individually affect fewer than 1 in 2,000 people, yet collectively an estimated 300 million individuals across more than 6,000 distinct disorders, approximately 72% of which are genetic in origin. Fewer than 5% have an approved therapy, and patients often endure a diagnostic odyssey exceeding five years. Cohorts number tens to hundreds of patients, described by high-dimensional genomic, imaging, and clinical data whose relationships to outcomes are context-dependent and incompletely specified.</p>
+                <p>Contemporary AI rests on assumptions these settings routinely violate—abundant labeled data, stable task definitions, homogeneous distributions, and well-defined ground truth—motivating four central ML challenges: (i) generalizing to unseen rare diseases; (ii) learning robustly from small cohorts with noisy, incomplete, or weakly labeled clinical annotations; (iii) transferring knowledge across diseases that share genomic mechanisms but differ phenotypically; and (iv) Evaluation under limited and evolving reference standards.</p>
+                <p>Recent work demonstrates these challenges are tractable: knowledge graph approaches now support zero-shot drug repurposing across thousands of diseases; multi-agent language model frameworks are beginning to assist in rare disease diagnosis; and clinical narrative integration is improving connections between patient records and biomedical ontologies. Yet these efforts remain fragmented and rarely evaluated in the most data-scarce settings.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="organizers">
+        <div class="section-container">
+            <h2 class="section-title">Organizing Committee</h2>
+            <div class="org-container">
+                <div class="org-matrix-row">
+                    <div class="org-flat-card" onclick="openBioModal(1)">
+                        <div class="org-avatar-box"><img src="organizors/1.jpg" alt="Junhan Zhao"></div>
+                        <h5>Junhan Zhao</h5>
+                        <p class="org-title-tag">Assistant Professor</p>
+                        <p class="org-univ">University of Chicago</p>
+                        <span class="view-bio-btn">View Biography <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                    <div class="org-flat-card" onclick="openBioModal(2)">
+                        <div class="org-avatar-box"><img src="organizors/2.jpg" alt="Zongxin Yang"></div>
+                        <h5>Zongxin Yang</h5>
+                        <p class="org-title-tag">Research Fellow</p>
+                        <p class="org-univ">Harvard Medical School</p>
+                        <span class="view-bio-btn">View Biography <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                    <div class="org-flat-card" onclick="openBioModal(3)">
+                        <div class="org-avatar-box"><img src="organizors/3.jpg" alt="Philip Chikontwe"></div>
+                        <h5>Philip Chikontwe</h5>
+                        <p class="org-title-tag">Research Fellow</p>
+                        <p class="org-univ">Harvard Medical School</p>
+                        <span class="view-bio-btn">View Biography <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                    <div class="org-flat-card" onclick="openBioModal(4)">
+                        <div class="org-avatar-box"><img src="organizors/4.jpg" alt="Ziyue Xu"></div>
+                        <h5>Ziyue Xu</h5>
+                        <p class="org-title-tag">Senior Scientist</p>
+                        <p class="org-univ">NVIDIA</p>
+                        <span class="view-bio-btn">View Biography <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </div>
+                <div class="org-matrix-row">
+                    <div class="org-flat-card" onclick="openBioModal(5)">
+                        <div class="org-avatar-box"><img src="organizors/5.jpg" alt="Kun-Hsing Yu"></div>
+                        <h5>Kun-Hsing Yu</h5>
+                        <p class="org-title-tag">Associate Professor</p>
+                        <p class="org-univ">Harvard Medical School</p>
+                        <span class="view-bio-btn">View Biography <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                    <div class="org-flat-card" onclick="openBioModal(6)">
+                        <div class="org-avatar-box"><img src="organizors/6.jpg" alt="Tianxi Cai"></div>
+                        <h5>Tianxi Cai</h5>
+                        <p class="org-title-tag">John Rock Professor</p>
+                        <p class="org-univ">Harvard University</p>
+                        <span class="view-bio-btn">View Biography <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                    <div class="org-flat-card" onclick="openBioModal(7)">
+                        <div class="org-avatar-box"><img src="organizors/7.jpg" alt="Samuel Volchenboum"></div>
+                        <h5>Samuel Volchenboum</h5>
+                        <p class="org-title-tag">Professor of Pediatrics</p>
+                        <p class="org-univ">University of Chicago</p>
+                        <span class="view-bio-btn">View Biography <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                    <div class="org-flat-card" onclick="openBioModal(8)">
+                        <div class="org-avatar-box"><img src="organizors/8.jpg" alt="Isaac Kohane"></div>
+                        <h5>Isaac Kohane</h5>
+                        <p class="org-title-tag">Inaugural Chair & Professor</p>
+                        <p class="org-univ">Harvard Medical School</p>
+                        <span class="view-bio-btn">View Biography <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="bio-modal" id="bioModal" onclick="closeBioModal(event)">
+        <div class="modal-content-box" onclick="event.stopPropagation()">
+            <span class="modal-close-btn" onclick="closeBioModal(null)"><i class="fa-solid fa-xmark"></i></span>
+            <div class="modal-header-profile">
+                <div class="modal-avatar"><img id="modalImg" src="" alt="Profile"></div>
+                <div class="modal-header-text">
+                    <h3 id="modalName">Name</h3>
+                    <a id="modalEmail" class="modal-email" href="">email@domain.com</a>
+                    <div id="modalTitle" class="modal-detail-title">Title & Affiliation</div>
+                </div>
+            </div>
+            <div id="modalBioText" class="modal-body-essay">
+                Biography description text.
+            </div>
+        </div>
+    </div>
+
+    <section id="schedule">
+        <div class="section-container">
+            <h2 class="section-title">Workshop Schedule</h2>
+            <div class="timeline-container">
+                <div class="timeline-row highlight-slot">
+                    <div class="time-slot">Morning</div>
+                    <div class="event-detail">
+                        <h4>To Be Announced.</h4>
+                        <p>Detailed program flow will be released soon.</p>
+                    </div>
+                </div>
+                <div class="timeline-row highlight-slot">
+                    <div class="time-slot">Keynote</div>
+                    <div class="event-detail">
+                        <h4>To Be Announced. <span class="badge-type type-keynote">Keynote</span></h4>
+                        <p>Detailed program flow will be released soon.</p>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="time-slot">Session I</div>
+                    <div class="event-detail">
+                        <h4>To Be Announced. <span class="badge-type type-oral">Oral</span></h4>
+                        <p>Detailed program flow will be released soon.</p>
+                    </div>
+                </div>
+                <div class="timeline-row">
+                    <div class="time-slot">Afternoon</div>
+                    <div class="event-detail">
+                        <h4>To Be Announced.</h4>
+                        <p>Detailed program flow will be released soon.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="speakers">
+        <div class="section-container">
+            <h2 class="section-title">Invited Speakers</h2>
+            <div class="speakers-grid">
+                <div class="speaker-card">
+                    <div class="speaker-circle"><i class="fa-solid fa-user-medical"></i></div>
+                    <h4>To Be Announced.</h4>
+                    <div class="inst">TBA Institution</div>
+                </div>
+                <div class="speaker-card">
+                    <div class="speaker-circle"><i class="fa-solid fa-user-medical"></i></div>
+                    <h4>To Be Announced.</h4>
+                    <div class="inst">TBA Institution</div>
+                </div>
+                <div class="speaker-card">
+                    <div class="speaker-circle"><i class="fa-solid fa-user-medical"></i></div>
+                    <h4>To Be Announced.</h4>
+                    <div class="inst">TBA Institution</div>
+                </div>
+                <div class="speaker-card">
+                    <div class="speaker-circle"><i class="fa-solid fa-user-medical"></i></div>
+                    <h4>To Be Announced.</h4>
+                    <div class="inst">TBA Institution</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="cfp">
+        <div class="section-container">
+            <h2 class="section-title">Call For Papers</h2>
+            <div class="cfp-grid-layout">
+                <div class="cfp-topics-block">
+                    <h3>Core Workshop Tracks</h3>
+                    <ul>
+                        <li><strong>To Be Announced.</strong> Specific track focus and call lines are currently in preparation.</li>
+                        <li><strong>To Be Announced.</strong> Specific track focus and call lines are currently in preparation.</li>
+                    </ul>
+                </div>
+                <div class="cfp-dates-block">
+                    <h3>Important Dates</h3>
+                    <div class="cfp-dates-card">
+                        <div class="flat-date-row"><span class="date-label">Submission Due</span><span class="date-val">To Be Announced.</span></div>
+                        <div class="flat-date-row"><span class="date-label">Review Notification</span><span class="date-val">To Be Announced.</span></div>
+                        <div class="flat-date-row"><span class="date-label">Camera-Ready Due</span><span class="date-val">To Be Announced.</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="papers">
+        <div class="section-container">
+            <h2 class="section-title">Accepted Papers</h2>
+            <div style="max-width: 950px; margin: 0 auto;">
+                <div class="paper-row">
+                    <div class="paper-info">
+                        <h4>To Be Announced.</h4>
+                        <p>The accepted papers list will appear post peer-review cycle completion.</p>
+                    </div>
+                    <div class="paper-action-links"><a href="#">PDF</a><a href="#">Code</a></div>
+                </div>
+                <div class="paper-row" style="opacity: 0.6;">
+                    <div class="paper-info">
+                        <h4>To Be Announced.</h4>
+                        <p>The accepted papers list will appear post peer-review cycle completion.</p>
+                    </div>
+                    <div class="paper-action-links"><a href="#">PDF</a></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 AI4RDP • Conference Workshop Track</p>
+        <p style="font-size: 0.8rem; opacity: 0.5; margin-top: 5px;">Contact Group: To Be Announced </p>
+    </footer>
+
+    <script>
+        const organizersData = {
+            1: {
+                name: "Junhan Zhao",
+                email: "junhanzv@uchicago.edu",
+                title: "Assistant Professor, Department of Pediatrics, Comprehensive Cancer Center, The University of Chicago",
+                bio: "Junhan Zhao builds biomedical AI systems. Trained at Purdue (Computer Graphics, PhD, Bilsland Fellowship) and Harvard (MSc Biostatistics), he completed his postdoctoral fellowship at Harvard Medical School before joining the University of Chicago faculty. His work has appeared in Nature, Nature Communications, Med, and IEEE journals (TMI, TIP, TVCG, TIM, JBHI). He serves on the scientific advisory board of Shriner Children’s, and advises Encapsulate Inc, supported by NASA. He received the Cancer Research Foundation Early Investigator Award and serves as an editor for Plos Digital Health, Frontiers in Medicine, and GigaScience."
+            },
+            2: {
+                name: "Zongxin Yang",
+                email: "zongxin_yang@hms.harvard.edu",
+                title: "Research Fellow, Department of Biomedical Informatics, Harvard Medical School",
+                bio: "Zongxin Yang's research connects multimodal AI with clinical medicine, spanning medical image segmentation, EHR analysis, and LLM-based clinical information extraction. His CLINES framework addresses a core challenge in rare disease research: extracting structured phenotype information from unstructured clinical narratives. He is listed in the Elsevier Top 2% citation indicators for AI and Image Processing (2024), serves as Area Chair for ECCV 2026, CVPR 2026, and has published at ACM MM (2023 Best Paper), NeurIPS (2025 Spotlight), CVPR, ICCV, ICLR, and ECCV."
+            },
+            3: {
+                name: "Philip Chikontwe",
+                email: "philip_chikontwe@hms.harvard.edu",
+                title: "Research Fellow, Department of Biomedical Informatics, Harvard Medical School",
+                bio: "Philip Chikontwe studies how machine learning can work effectively when labeled clinical data is scarce, a challenge endemic to rare disease research. His PhD work at DGIST, South Korea (2023) focused on few-shot learning, weakly supervised learning, and federated learning for medical imaging, and his current research at Harvard extends these methods to cancer diagnosis and tumor characterization. His work on one-shot federated learning across medical institutions speaks directly to the registry fragmentation problem that motivates this workshop, with publications in Medical Image Analysis, IEEE Transactions on Medical Imaging, and MICCAI."
+            },
+            4: {
+                name: "Ziyue Xu",
+                email: "ziyuex@nvidia.com",
+                title: "Senior Scientist, NVIDIA",
+                bio: "Ziyue Xu works at the intersection of federated learning and medical imaging, with publications across IEEE TMI, MICCAI, and Nature Communications. At NVIDIA, he leads the development of NVFlare, the most widely adopted open-source federated learning framework for healthcare, and co-leads Project MONAI, the standard platform for medical AI development across institutions. His work directly addresses the registry fragmentation problem central to this workshop: enabling multi-institutional model training without moving sensitive patient data. Prior to NVIDIA, he was a Staff Scientist and Lab Manager at the NIH. He holds a BS from Tsinghua University and a PhD from the University of Iowa (2012), is an IEEE Senior Member, and serves as Associate Editor for IEEE Transactions on Medical Imaging and the International Journal of Computer Vision."
+            },
+            5: {
+                name: "Kun-Hsing Yu, MD, PhD",
+                email: "kunhsing_yu@hms.harvard.edu",
+                title: "Associate Professor, Department of Biomedical Informatics, Harvard Medical School",
+                bio: "Kun-Hsing Yu integrates multi-omics profiles with quantitative histopathology to predict clinical phenotypes in cancer. He developed the first fully automated whole-slide image analysis methods that have been adopted across multiple institutions for cancer diagnosis research. His pathology foundation model for cancer diagnosis and prognosis appeared in Nature (2024), and his ongoing work on rare cancer detection with limited labeled data is a direct instance of the data scarcity challenge central to this workshop. He holds an MD from National Taiwan University and a PhD from Stanford, and he is a Fellow of the American Medical Informatics Association. He received the National Institutes of Health (NIH) Maximizing Investigators' Research Award, Google Research Scholar Award, and the American Cancer Society (ACS) Research Scholar Award."
+            },
+            6: {
+                name: "Tianxi Cai, ScD",
+                email: "tcai@hsph.harvard.edu",
+                title: "John Rock Professor of Population and Translational Data Science, Harvard T.H. Chan School of Public Health; Professor of Biomedical Informatics, Harvard Medical School",
+                bio: "Tianxi Cai develops the statistical and machine learning foundations for mining electronic health records at scale. Her semi-supervised phenotyping framework PheCAP (Nature Protocols, 2019) has become a standard tool for constructing clinical cohorts from EHR data, and she currently provides statistical leadership on the NIH-funded Undiagnosed Diseases Network, one of the largest coordinated efforts in rare disease diagnosis in the United States. Her label-efficient methods are particularly well suited to rare disease settings where gold-standard annotations are expensive and sparse."
+            },
+            7: {
+                name: "Samuel Volchenboum, MD, PhD, MS",
+                email: "slv@uchicago.edu",
+                title: "Professor of Pediatrics and Associate Chief Research Informatics Officer, University of Chicago",
+                bio: "Samuel Volchenboum has spent his career addressing the data scarcity problem in pediatric rare disease research by building international data commons. His flagship project, the Pediatric Cancer Data Commons, is an international data infrastructure for pediatric oncology used by research groups across North America, Europe, and Asia, and his Data for the Common Good initiative has since extended to monogenic epilepsies, monogenic diabetes, rare blood cancers, and other ultra-rare conditions. Trained at Mayo Medical School (MD, PhD), Dana-Farber/Boston Children's (pediatric oncology), and MIT (MS, Biomedical Informatics), he brings a rare combination of clinical expertise in pediatric hematology/oncology and deep experience in federated data infrastructure directly relevant to this workshop's core themes."
+            },
+            8: {
+                name: "Isaac Kohane, MD, PhD",
+                email: "isaac_kohane@hms.harvard.edu",
+                title: "Inaugural Chair, Department of Biomedical Informatics; Marion V. Nelson Professor, Harvard Medical School",
+                bio: "Isaac Kohane has shaped the field of biomedical informatics for three decades, with a research vision centered on treating healthcare systems as living laboratories for discovery. He co-authored the Institute of Medicine Report on Precision Medicine, has published several hundred papers, and authored The AI Revolution in Medicine: GPT-4 and Beyond (2023). As founding chair of HMS DBMI and Editor-in-Chief of NEJM AI, he brings unparalleled translational reach and institutional leadership to ensure the workshop's outputs connect to clinical practice and policy."
+            }
+        };
+
+        function openBioModal(id) {
+            const data = organizersData[id];
+            if (!data) return;
+
+            document.getElementById('modalImg').src = `organizors/${id}.jpg`;
+            document.getElementById('modalName').innerText = data.name;
+            document.getElementById('modalEmail').innerText = data.email;
+            document.getElementById('modalEmail').href = `mailto:${data.email}`;
+            document.getElementById('modalTitle').innerText = data.title;
+            document.getElementById('modalBioText').innerText = data.bio;
+
+            document.getElementById('bioModal').classList.add('active');
+        }
+
+        function closeBioModal(event) {
+            if (event === null || event.target.id === 'bioModal' || event.target.closest('.modal-close-btn')) {
+                document.getElementById('bioModal').classList.remove('active');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const navbar = document.getElementById('navbar');
+            const sections = document.querySelectorAll('header, section');
+            const navLinks = document.querySelectorAll('.nav-links a');
+
+            const options = {
+                root: null,
+                threshold: 0.5,
+                rootMargin: "-20px 0px 0px 0px"
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const currentId = entry.target.getAttribute('id');
+
+                        if (currentId === 'hero') {
+                            navbar.classList.remove('scrolled');
+                            navLinks.forEach(link => link.classList.remove('active'));
+                        } else {
+                            navbar.classList.add('scrolled');
+
+                            navLinks.forEach(link => {
+                                if (link.getAttribute('data-target') === currentId) {
+                                    link.classList.add('active');
+                                } else {
+                                    link.classList.remove('active');
+                                }
+                            });
+                        }
+                    }
+                });
+            }, options);
+
+            sections.forEach(section => observer.observe(section));
+        });
+    </script>
+</body>
+</html>
