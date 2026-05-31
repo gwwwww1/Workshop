@@ -496,28 +496,51 @@
         footer { background-color: #0f172a; color: #64748b; padding: 45px; text-align: center; scroll-snap-align: end; }
 
         /* ==========================================
-           4. 移动端全包自适应降级排版（【修复】手机端完美长出菜单栏）
+           4. 移动端全包自适应降级排版（【更新】：手机端完美支持横向滑动菜单栏）
            ========================================== */
         @media (max-width: 968px) {
             html { scroll-snap-type: none; } /* 移动端自然滚动，避免吸附僵硬 */
-            header, section { min-height: auto; padding: 70px 16px 50px 16px; }
-
-            /* 【修复】移动端导航菜单重构：不再进行 display: none 隐藏，而是转换为精致小巧的横向滑动/流式小字菜单 */
-            nav { padding: 12px 0; }
+            header, section { min-height: auto; padding: 90px 16px 50px 16px; }
+            
+            /* 【核心修改】：开启横向滑条模式 */
+            nav { 
+                padding: 10px 0; 
+                overflow-x: auto; /* 允许超出时左右滑动 */
+                white-space: nowrap; /* 强行禁止链接折行，保持单行横排 */
+                -webkit-overflow-scrolling: touch; /* 让苹果手机滑动更丝滑丝滑 */
+            }
             nav.scrolled { padding: 8px 0; }
-            .nav-container { flex-direction: column; gap: 8px; padding: 0 12px; justify-content: center; }
+            
+            /* 去除滑条样式（让界面看起来更清爽干净） */
+            nav::-webkit-scrollbar { display: none; } 
+            
+            .nav-container { 
+                display: flex;
+                flex-direction: row; 
+                gap: 16px; 
+                padding: 0 16px; 
+                justify-content: flex-start; /* 左对齐方便向右滑动展示完整菜单 */
+                width: max-content; /* 容器宽度等于内容总宽 */
+            }
+            
+            /* 手机状态栏内的 Logo 保持原本质感与缩放比例 */
+            .logo-group { gap: 10px; pointer-events: auto !important; }
+            .logo-group img { height: 18px; }
+            .logo-group img[alt="Harvard Medical School"] { height: 24px !important; }
+            .logo-group img[alt="NVIDIA"] { height: 22px !important; }
+            .logo-divider { height: 10px; }
 
-            /* 手机状态栏内的 Logo 比例缩放 */
-            .logo-group { gap: 10px; }
-            .logo-group img { height: 20px; }
-            .logo-group img[alt="Harvard Medical School"] { height: 26px !important; }
-            .logo-group img[alt="NVIDIA"] { height: 24px !important; }
-            .logo-divider { height: 12px; }
-
-            /* 菜单栏自适应包裹，字号等比缩水以防超框 */
-            .nav-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; }
-            .nav-links a { font-size: 0.78rem; padding: 4px 6px; }
-            .nav-links a::after { bottom: 0; left: 6px; right: 6px; }
+            /* 【完美复原】：菜单保留电脑端的原汁原味样式与字号大小，不再强制缩水 */
+            .nav-links { 
+                display: flex; 
+                flex-direction: row;
+                gap: 4px; 
+            }
+            .nav-links a { 
+                font-size: 0.95rem; /* 完全复原大屏字号 */
+                padding: 6px 12px; 
+            }
+            .nav-links a::after { bottom: -2px; left: 12px; right: 12px; }
 
             /* 首页大Logo墙手机排版智能缩放与权重保留 */
             .hero-logo-row { gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
@@ -573,7 +596,6 @@
             .org-matrix-row, .speakers-grid { grid-template-columns: 1fr; max-width: 280px; margin: 0 auto; }
             .academic-meta-line { grid-template-columns: 1fr; gap: 12px; max-width: 240px; }
             header h1 { font-size: 1.8rem; }
-            .nav-links a { font-size: 0.72rem; padding: 2px 4px; }
         }
     </style>
 </head>
