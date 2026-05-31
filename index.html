@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -219,7 +218,7 @@
             text-align: center;
         }
 
-        /* 首页中央大尺寸官方机构 Logo 墙展示架构（完全不受菜单栏修改影响，完美保留） */
+        /* 首页中央大尺寸官方机构 Logo 墙展示架构 */
         .hero-logo-row {
             display: flex;
             align-items: center;
@@ -497,15 +496,28 @@
         footer { background-color: #0f172a; color: #64748b; padding: 45px; text-align: center; scroll-snap-align: end; }
 
         /* ==========================================
-           4. 移动端全包自适应降级排版（完美适配手机）
+           4. 移动端全包自适应降级排版（【修复】手机端完美长出菜单栏）
            ========================================== */
         @media (max-width: 968px) {
             html { scroll-snap-type: none; } /* 移动端自然滚动，避免吸附僵硬 */
-            header, section { min-height: auto; padding: 80px 16px 50px 16px; }
-            
-            /* 导航连线隐藏 */
-            .nav-links { display: none; }
-            .nav-container { justify-content: center; }
+            header, section { min-height: auto; padding: 70px 16px 50px 16px; }
+
+            /* 【修复】移动端导航菜单重构：不再进行 display: none 隐藏，而是转换为精致小巧的横向滑动/流式小字菜单 */
+            nav { padding: 12px 0; }
+            nav.scrolled { padding: 8px 0; }
+            .nav-container { flex-direction: column; gap: 8px; padding: 0 12px; justify-content: center; }
+
+            /* 手机状态栏内的 Logo 比例缩放 */
+            .logo-group { gap: 10px; }
+            .logo-group img { height: 20px; }
+            .logo-group img[alt="Harvard Medical School"] { height: 26px !important; }
+            .logo-group img[alt="NVIDIA"] { height: 24px !important; }
+            .logo-divider { height: 12px; }
+
+            /* 菜单栏自适应包裹，字号等比缩水以防超框 */
+            .nav-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; }
+            .nav-links a { font-size: 0.78rem; padding: 4px 6px; }
+            .nav-links a::after { bottom: 0; left: 6px; right: 6px; }
 
             /* 首页大Logo墙手机排版智能缩放与权重保留 */
             .hero-logo-row { gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
@@ -561,6 +573,7 @@
             .org-matrix-row, .speakers-grid { grid-template-columns: 1fr; max-width: 280px; margin: 0 auto; }
             .academic-meta-line { grid-template-columns: 1fr; gap: 12px; max-width: 240px; }
             header h1 { font-size: 1.8rem; }
+            .nav-links a { font-size: 0.72rem; padding: 2px 4px; }
         }
     </style>
 </head>
@@ -588,7 +601,6 @@
         </div>
     </nav>
 
-    <!-- PAGE 1: HERO -->
     <header id="hero">
         <div class="hero-main-body">
 
@@ -621,7 +633,6 @@
         </div>
     </header>
 
-    <!-- PAGE 2: ABOUT -->
     <section id="about">
         <div class="section-container">
             <h2 class="section-title">About the Workshop</h2>
@@ -633,7 +644,6 @@
         </div>
     </section>
 
-    <!-- PAGE 3: ORGANIZERS -->
     <section id="organizers">
         <div class="section-container">
             <h2 class="section-title">Organizing Committee</h2>
@@ -702,7 +712,6 @@
         </div>
     </section>
 
-    <!-- 全局中央学术简介弹窗组件 -->
     <div class="bio-modal" id="bioModal" onclick="closeBioModal(event)">
         <div class="modal-content-box" onclick="event.stopPropagation()">
             <span class="modal-close-btn" onclick="closeBioModal(null)"><i class="fa-solid fa-xmark"></i></span>
@@ -720,7 +729,6 @@
         </div>
     </div>
 
-    <!-- PAGE 4: SCHEDULE -->
     <section id="schedule">
         <div class="section-container">
             <h2 class="section-title">Workshop Schedule</h2>
@@ -757,7 +765,6 @@
         </div>
     </section>
 
-    <!-- PAGE 5: SPEAKERS -->
     <section id="speakers">
         <div class="section-container">
             <h2 class="section-title">Invited Speakers</h2>
@@ -786,7 +793,6 @@
         </div>
     </section>
 
-    <!-- PAGE 6: CFP -->
     <section id="cfp">
         <div class="section-container">
             <h2 class="section-title">Call For Papers</h2>
@@ -810,7 +816,6 @@
         </div>
     </section>
 
-    <!-- PAGE 7: ACCEPTED PAPERS -->
     <section id="papers">
         <div class="section-container">
             <h2 class="section-title">Accepted Papers</h2>
@@ -884,7 +889,7 @@
             },
             8: {
                 name: "Isaac Kohane, MD, PhD",
-                email: "isaac_kohane@hms.harvard.edu",
+                email: "isaac_jane@hms.harvard.edu",
                 title: "Inaugural Chair, Department of Biomedical Informatics; Marion V. Nelson Professor, Harvard Medical School",
                 bio: "Isaac Kohane has shaped the field of biomedical informatics for three decades, with a research vision centered on treating healthcare systems as living laboratories for discovery. He co-authored the Institute of Medicine Report on Precision Medicine, has published several hundred papers, and authored The AI Revolution in Medicine: GPT-4 and Beyond (2023). As founding chair of HMS DBMI and Editor-in-Chief of NEJM AI, he brings unparalleled translational reach and institutional leadership to ensure the workshop's outputs connect to clinical practice and policy."
             }
@@ -949,4 +954,3 @@
     </script>
 </body>
 </html>
-
