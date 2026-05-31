@@ -23,7 +23,7 @@
             --conference-blue: #0ea5e9; /* 科技链接蓝 */
 
             /* 状态栏滚动出现后的好看底色（带毛玻璃质感） */
-            --nav-bg-scrolled: rgba(255, 255, 255, 0.85);
+            --nav-bg-scrolled: rgba(255, 255, 255, 0.9);
 
             /* 页面独立背景配方 */
             --bg-page-home: #ffffff;
@@ -45,7 +45,7 @@
 
         html {
             scroll-behavior: smooth;
-            scroll-snap-type: y mandatory; /* 精准全屏吸附 */
+            scroll-snap-type: y mandatory; /* 电脑端精准全屏吸附 */
         }
 
         body {
@@ -68,7 +68,7 @@
         }
 
         /* ==========================================
-           2. 状态栏核心动效（优化：首页完全隐藏图标，后续自然长出）
+           2. 状态栏核心动效（About 触发图标重现）
            ========================================== */
         nav {
             position: fixed;
@@ -97,7 +97,7 @@
             padding: 0 24px;
         }
 
-        /* 导航栏内的联合 Logo 组：初始在首页完全隐藏且不占位 */
+        /* 导航栏内的联合 Logo 组：初始在首页隐藏 */
         .logo-group {
             display: flex;
             align-items: center;
@@ -108,7 +108,7 @@
             transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* 当状态栏激活滚动（即到达后面页面时）图标完美重现本色 */
+        /* 当状态栏激活滚动（即到达 About 及后续页面时）图标重现 */
         nav.scrolled .logo-group {
             opacity: 1;
             pointer-events: auto;
@@ -116,13 +116,13 @@
         }
 
         .logo-group img {
-            height: 28px; /* 菜单栏随行状态下的精致小高度 */
+            height: 28px;
             width: auto;
             filter: none !important;
             opacity: 1;
         }
 
-        /* 竖向高阶分割线 */
+        /* 竖向高级分割线 */
         .logo-divider {
             width: 1px;
             height: 16px;
@@ -218,7 +218,6 @@
             text-align: center;
         }
 
-        /* 首页中央大尺寸官方机构 Logo 墙展示架构 */
         .hero-logo-row {
             display: flex;
             align-items: center;
@@ -238,7 +237,6 @@
             background: rgba(15, 23, 42, 0.15);
         }
 
-        /* 置于题目最上方的标准顶会首届 Workshop 引导前缀样式 */
         .hero-workshop-prefix {
             font-family: 'Lexend', sans-serif;
             font-size: 1.3rem;
@@ -264,16 +262,6 @@
             font-weight: 400;
             margin-bottom: 35px;
             font-family: 'Inter', sans-serif;
-        }
-
-        /* 会议属性条线 */
-        .hero-workshop-tag-line {
-            font-family: 'Inter', sans-serif;
-            font-size: 1.15rem;
-            color: var(--conference-blue);
-            font-weight: 500;
-            margin-top: 28px;
-            display: inline-block;
         }
 
         .academic-meta-line {
@@ -342,14 +330,8 @@
             border: 3px solid var(--accent-light);
             transition: border-color 0.3s;
         }
-        .org-flat-card:hover .org-avatar-box {
-            border-color: var(--accent);
-        }
-        .org-avatar-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        .org-flat-card:hover .org-avatar-box { border-color: var(--accent); }
+        .org-avatar-box img { width: 100%; height: 100%; object-fit: cover; }
 
         .org-flat-card h5 { font-size: 1.15rem; margin-bottom: 4px; font-weight: 700; color: var(--primary); }
         .org-flat-card .org-title-tag { color: var(--accent); font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; }
@@ -365,10 +347,7 @@
             transform: translateY(5px);
             transition: all 0.3s;
         }
-        .org-flat-card:hover .view-bio-btn {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .org-flat-card:hover .view-bio-btn { opacity: 1; transform: translateY(0); }
 
         /* 高级学术弹窗Modal系统 */
         .bio-modal {
@@ -385,10 +364,7 @@
             pointer-events: none;
             transition: opacity 0.4s ease;
         }
-        .bio-modal.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .bio-modal.active { opacity: 1; pointer-events: auto; }
         .modal-content-box {
             background: #ffffff;
             width: 100%;
@@ -402,9 +378,7 @@
             max-height: 85vh;
             overflow-y: auto;
         }
-        .bio-modal.active .modal-content-box {
-            transform: translateY(0);
-        }
+        .bio-modal.active .modal-content-box { transform: translateY(0); }
         .modal-close-btn {
             position: absolute;
             top: 25px; right: 25px;
@@ -453,7 +427,7 @@
         }
         .speaker-circle {
             width: 95px; height: 95px; border-radius: 50%; margin: 0 auto 18px auto;
-            background: var(--bg-light); display: flex; align-items: center; justify-content: center;
+            background: #f8fafc; display: flex; align-items: center; justify-content: center;
             font-size: 2.2rem; color: #cbd5e1; border: 2px solid #cbd5e1;
         }
         .speaker-card h4 { font-size: 1.2rem; margin-bottom: 5px; font-weight: 500; color: var(--text-muted); font-style: italic; }
@@ -490,112 +464,120 @@
         .paper-info h4 { font-size: 1.1rem; color: var(--text-muted); font-family: 'Inter', sans-serif; font-weight: 500; font-style: italic; }
         .paper-info p { font-size: 0.9rem; color: #94a3b8; margin-top: 4px; }
         .paper-action-links a {
-            font-size: 0.85rem; font-weight: 500; background: var(--bg-light); padding: 6px 14px; border-radius: 6px; margin-left: 8px; color: #94a3b8; pointer-events: none;
+            font-size: 0.85rem; font-weight: 500; background: #f1f5f9; padding: 6px 14px; border-radius: 6px; margin-left: 8px; color: #94a3b8; pointer-events: none;
         }
 
         footer { background-color: #0f172a; color: #64748b; padding: 45px; text-align: center; scroll-snap-align: end; }
 
         /* ==========================================
-           4. 移动端全包自适应降级排版（【更新】：手机端完美支持横向滑动菜单栏）
+           4. 移动端高级适配与自适应优化
            ========================================== */
         @media (max-width: 968px) {
-            html { scroll-snap-type: none; } /* 移动端自然滚动，避免吸附僵硬 */
-            header, section { min-height: auto; padding: 90px 16px 50px 16px; }
-            
-            /* 【核心修改】：开启横向滑条模式 */
-            nav { 
-                padding: 10px 0; 
-                overflow-x: auto; /* 允许超出时左右滑动 */
-                white-space: nowrap; /* 强行禁止链接折行，保持单行横排 */
-                -webkit-overflow-scrolling: touch; /* 让苹果手机滑动更丝滑丝滑 */
-            }
-            nav.scrolled { padding: 8px 0; }
-            
-            /* 去除滑条样式（让界面看起来更清爽干净） */
-            nav::-webkit-scrollbar { display: none; } 
-            
-            .nav-container { 
-                display: flex;
-                flex-direction: row; 
-                gap: 16px; 
-                padding: 0 16px; 
-                justify-content: flex-start; /* 左对齐方便向右滑动展示完整菜单 */
-                width: max-content; /* 容器宽度等于内容总宽 */
-            }
-            
-            /* 手机状态栏内的 Logo 保持原本质感与缩放比例 */
-            .logo-group { gap: 10px; pointer-events: auto !important; }
-            .logo-group img { height: 18px; }
-            .logo-group img[alt="Harvard Medical School"] { height: 24px !important; }
-            .logo-group img[alt="NVIDIA"] { height: 22px !important; }
-            .logo-divider { height: 10px; }
+            html { scroll-snap-type: none; } /* 移动端自然滚动，避免吸附生硬 */
+            header, section { min-height: auto; padding: 85px 16px 55px 16px; }
 
-            /* 【完美复原】：菜单保留电脑端的原汁原味样式与字号大小，不再强制缩水 */
-            .nav-links { 
-                display: flex; 
-                flex-direction: row;
-                gap: 4px; 
+            /* 横向滑条菜单优化 */
+            nav {
+                padding: 12px 0;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
             }
-            .nav-links a { 
-                font-size: 0.95rem; /* 完全复原大屏字号 */
-                padding: 6px 12px; 
+            nav.scrolled { padding: 10px 0; }
+            nav::-webkit-scrollbar { display: none; }
+
+            .nav-container {
+                display: flex;
+                flex-direction: row;
+                gap: 20px;
+                padding: 0 20px;
+                justify-content: flex-start;
+                width: max-content;
+                padding-right: 40px; /* 增加右侧预留缓冲区，防止滑到尽头被截断 */
+            }
+
+            /* 手机状态栏内的 Logo 动态显示与平滑缩放 */
+            .logo-group { gap: 12px; }
+            .logo-group img { height: 20px; }
+            .logo-group img[alt="Harvard Medical School"] { height: 26px !important; }
+            .logo-group img[alt="NVIDIA"] { height: 24px !important; }
+            .logo-divider { height: 12px; }
+
+            /* 完整保留桌面端精美样式与字号大小 */
+            .nav-links {
+                display: flex;
+                flex-direction: row;
+                gap: 6px;
+            }
+            .nav-links a {
+                font-size: 0.95rem;
+                padding: 6px 12px;
             }
             .nav-links a::after { bottom: -2px; left: 12px; right: 12px; }
 
-            /* 首页大Logo墙手机排版智能缩放与权重保留 */
-            .hero-logo-row { gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
-            .hero-logo-row img[alt="University of Chicago"] { height: 32px; }
-            .hero-logo-row img[alt="Harvard Medical School"] { height: 44px; margin-top: -2px; }
-            .hero-logo-row img[alt="NVIDIA"] { height: 42px; margin-top: 1px; }
-            .hero-logo-divider { height: 16px; }
+            /* 首页大Logo墙手机端优雅缩放 */
+            .hero-logo-row { gap: 16px; margin-bottom: 35px; flex-wrap: wrap; }
+            .hero-logo-row img[alt="University of Chicago"] { height: 35px; }
+            .hero-logo-row img[alt="Harvard Medical School"] { height: 48px; margin-top: -2px; }
+            .hero-logo-row img[alt="NVIDIA"] { height: 46px; margin-top: 1px; }
+            .hero-logo-divider { height: 18px; }
 
-            /* 字体排版缩放防止溢出 */
-            header h1 { font-size: 2.1rem; line-height: 1.3; }
-            .hero-subtitle { font-size: 1.15rem; margin-bottom: 25px; padding: 0 8px; }
-            .hero-workshop-prefix { font-size: 0.95rem; letter-spacing: 1.5px; }
+            /* 标题文本防止移动端截断溢出 */
+            header h1 { font-size: 2.2rem; line-height: 1.3; font-weight: 700; padding: 0 4px; }
+            .hero-subtitle { font-size: 1.2rem; margin-bottom: 30px; padding: 0 10px; }
+            .hero-workshop-prefix { font-size: 1rem; letter-spacing: 2px; }
 
-            /* 图标学术信息行自适应切换为 2x2 网格，防止文字重叠 */
+            /* 顶部学术指标块自适应：多列降级为 2x2 网格，清晰不重叠 */
             .academic-meta-line {
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
-                gap: 16px;
-                max-width: 440px;
+                gap: 16px 24px;
+                max-width: 460px;
                 margin: 0 auto;
                 text-align: left;
-                font-size: 0.9rem;
+                font-size: 0.95rem;
+                padding: 0 10px;
             }
             .academic-meta-line span { display: flex; align-items: center; }
 
-            /* 组委会矩阵降级为两列 */
-            .org-matrix-row { grid-template-columns: repeat(2, 1fr); gap: 14px; }
-            .org-flat-card { padding: 20px 12px; border-radius: 10px; }
-            .org-avatar-box { width: 75px; height: 75px; margin-bottom: 12px; }
-            .org-flat-card h5 { font-size: 0.95rem; }
-            .org-flat-card .org-title-tag { font-size: 0.75rem; }
-            .org-flat-card .org-univ { font-size: 0.75rem; }
+            /* 关于页面移动端精调 */
+            .about-essay-full p { font-size: 1.05rem; line-height: 1.7; margin-bottom: 16px; }
 
-            /* 弹出卡片自适应 */
-            .modal-content-box { padding: 24px 20px; width: 92%; }
+            /* 组委会模块：重构为 2 列卡片网格 */
+            .org-matrix-row { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+            .org-flat-card { padding: 24px 14px; border-radius: 12px; }
+            .org-avatar-box { width: 80px; height: 80px; margin-bottom: 12px; }
+            .org-flat-card h5 { font-size: 1rem; }
+            .org-flat-card .org-title-tag { font-size: 0.8rem; }
+            .org-flat-card .org-univ { font-size: 0.8rem; }
+
+            /* 弹出详细信息Modal自适应 */
+            .modal-content-box { padding: 28px 20px; width: 92%; }
             .modal-header-profile { flex-direction: column; text-align: center; gap: 14px; padding-bottom: 16px; }
-            .modal-avatar { width: 75px; height: 75px; }
-            .modal-header-text h3 { font-size: 1.3rem; }
-            .modal-body-essay { font-size: 0.95rem; line-height: 1.6; }
+            .modal-avatar { width: 80px; height: 80px; }
+            .modal-header-text h3 { font-size: 1.4rem; }
+            .modal-body-essay { font-size: 0.95rem; line-height: 1.65; }
 
-            /* 日程、演讲、CFP、论文等后续板块自适应 */
-            .timeline-row { grid-template-columns: 1fr; gap: 6px; padding: 16px 20px; }
-            .speakers-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
-            .speaker-card { padding: 20px 12px; }
-            .speaker-circle { width: 70px; height: 70px; font-size: 1.7rem; }
-            .speaker-card h4 { font-size: 1rem; }
-            .cfp-grid-layout { grid-template-columns: 1fr; gap: 24px; }
-            .paper-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+            /* 日程、演讲者、CFP和论文模块自适应 */
+            .timeline-row { grid-template-columns: 1fr; gap: 8px; padding: 18px 20px; border-left-width: 5px; }
+            .time-slot { font-size: 1.1rem; }
+            .speakers-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+            .speaker-card { padding: 24px 14px; border-radius: 12px; }
+            .speaker-circle { width: 75px; height: 75px; font-size: 1.8rem; margin-bottom: 14px; }
+            .speaker-card h4 { font-size: 1.05rem; }
+            .cfp-grid-layout { grid-template-columns: 1fr; gap: 30px; }
+            .paper-row { flex-direction: column; align-items: flex-start; gap: 12px; padding: 18px 0; }
+            .paper-action-links { margin-left: 0; margin-top: 4px; }
+            .paper-action-links a { margin-left: 0; margin-right: 8px; padding: 5px 12px; }
         }
 
-        /* 针对超小屏手机的极限优化 */
+        /* 极限窄屏手机（如 iPhone SE 等小屏设备）的深度安全优化 */
         @media (max-width: 480px) {
-            .org-matrix-row, .speakers-grid { grid-template-columns: 1fr; max-width: 280px; margin: 0 auto; }
-            .academic-meta-line { grid-template-columns: 1fr; gap: 12px; max-width: 240px; }
-            header h1 { font-size: 1.8rem; }
+            .org-matrix-row, .speakers-grid { grid-template-columns: 1fr; max-width: 300px; margin: 0 auto; gap: 20px; }
+            .academic-meta-line { grid-template-columns: 1fr; gap: 12px; max-width: 260px; }
+            header h1 { font-size: 1.9rem; }
+            .hero-subtitle { font-size: 1.1rem; }
+            .section-title { font-size: 1.8rem; margin-bottom: 35px; }
         }
     </style>
 </head>
@@ -944,8 +926,8 @@
 
             const options = {
                 root: null,
-                threshold: 0.5,
-                rootMargin: "-20px 0px 0px 0px"
+                threshold: 0.1, // 降低阈值，确保一触碰到 About 边界就能立刻、灵敏地长出 Logo
+                rootMargin: "-10px 0px 0px 0px"
             };
 
             const observer = new IntersectionObserver((entries) => {
